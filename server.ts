@@ -9,5 +9,5 @@ const startServer = async () => {
     console.log(`Server is listening on :  http://localhost:${port}`);
   });
 };
-
+// Global Error Handler
 startServer();
