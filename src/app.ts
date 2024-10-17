@@ -3,17 +3,16 @@ import express, { Request, Response, NextFunction } from "express";
 import createHttpError, { HttpError } from "http-errors";
 
 import globalErrorHandler from "./middleware/GlobalErrorHandler";
+import userRouter from "./user/userRouter";
 
 const app = express();
 
 // Routes
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
-  const error = createHttpError(400, "Something Went Wrong.");
-  throw error;
-
   res.json({ message: "Welcome to REST API with TS" });
 });
 
+app.use("/api/users", userRouter);
 // Global Error Handler
 app.use(globalErrorHandler);
 
