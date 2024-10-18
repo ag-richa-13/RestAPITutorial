@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import userModel from "./userModel";
 import { sign } from "jsonwebtoken";
 import { config } from "../config/config";
+import { User } from "./userTypes";
 
 const registerUser = async (
   req: Request,
@@ -17,36 +18,55 @@ const registerUser = async (
     const errors = createHttpError(400, "All fields are required");
     return next(errors);
   }
-  // Database Call
-  const user = await userModel.findOne({ email });
-  if (user) {
-    const errors = createHttpError(400, "User already exists");
-    return next(errors);
+  try {
+    const user = await userModel.findOne({ email });
+    if (user) {
+      const errors = createHttpError(400, "User already exists");
+      return next(errors);
+    }
+  } catch (err) {
+    console.error(err); // Log the error
+    return next(createHttpError(500, "Error while getting user."));
   }
+  // Database Call
+
   /* Await is used for asyncronous operations */
   /// Password hashing
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // store data
-  const newUser = await userModel.create({
-    name,
-    email,
-    password: hashedPassword,
-  });
+  let newUser: User;
+  try {
+    newUser = await userModel.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+  } catch (err) {
+    console.log(err);
+    return next(createHttpError(500, "Error while creating user."));
+  }
 
   // Token generation -> JWT (JSON Web Token)
   /* 
   By default Jwt use HS256 algorithm  by "sign" function, we can use any other algorithm 
   like "RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"
    */
-  const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
-    expiresIn: "1h",
-    algorithm: "HS256",
-  });
-  // Response
-  res.json({
-    accessToken: token,
-  });
+
+  try {
+    const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
+      expiresIn: "1h",
+      algorithm: "HS256",
+    });
+    // Response
+    res.json({
+      accessToken: token,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(500, "Error while generating token."));
+  }
+
   console.log("User controller loaded");
 };
 
