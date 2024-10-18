@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
+import bcrypt from "bcrypt";
 import userModel from "./userModel";
 
 const registerUser = async (
@@ -15,14 +15,15 @@ const registerUser = async (
     const errors = createHttpError(400, "All fields are required");
     return next(errors);
   }
-
   // Database Call
   const user = await userModel.findOne({ email });
   if (user) {
     const errors = createHttpError(400, "User already exists");
     return next(errors);
   }
-
+  /* Await is used for asyncronous operations */
+  /// Password hashing
+  const hashedPassword = await bcrypt.hash(password, 10);
   // Process
 
   // Response
