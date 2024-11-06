@@ -18,27 +18,3 @@ const connectDB = async () => {
 };
 
 export default connectDB;
-
-// If mysql do not work then use this code
-
-// import mysql from "mysql2/promise";
-// import { config } from "./config";
-
-// const connectDB = async () => {
-//   try {
-//     const connection = await mysql.createConnection({
-//       host: config.mysqlHost,
-//       user: config.mysqlUser,
-//       password: config.mysqlPassword,
-//       database: config.mysqlDatabase,
-//     });
-//     console.log("Connected to MySQL database");
-
-//     return connection;
-//   } catch (err) {
-//     console.error("Failed to connect to MySQL database", err);
-//     process.exit(1);
-//   }
-// };
-
-// export default connectDB;
