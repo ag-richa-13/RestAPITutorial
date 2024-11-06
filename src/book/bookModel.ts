@@ -9,12 +9,16 @@ const bookSchema = new mongoose.Schema<Book>(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      // ref: "User",
       required: true,
     },
     image: {
       type: String,
       required: true,
+    },
+    file: {
+      type: String,
+      required: true,
+      // Add file upload logic here using Multer or any other file upload library
     },
     genre: {
       type: String,
