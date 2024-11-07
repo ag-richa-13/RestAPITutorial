@@ -5,6 +5,7 @@ import path from "path";
 import createHttpError from "http-errors";
 import bookModel from "./bookModel";
 import fs from "fs";
+import { AuthRequest } from "../middleware/authenticate";
 
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
@@ -39,14 +40,11 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       format: "pdf",
     });
 
-    console.log("uploadResultBook", uploadResultBook);
-    console.log("uploadResult", uploadResult);
-    // @ts-expect-error req.userID is not defined in the Request type, but it's added by the authenticate middleware
-    console.log("UserID: ", req.userID);
+    const _req = req as AuthRequest;
     const newBook = await bookModel.create({
       title,
       genre,
-      author: "671224d7d77752fe8fbb345a",
+      author: _req.userID as string,
       image: uploadResult.secure_url,
       file: uploadResultBook.secure_url,
     });
