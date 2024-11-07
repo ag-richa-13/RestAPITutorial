@@ -41,7 +41,8 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log("uploadResultBook", uploadResultBook);
     console.log("uploadResult", uploadResult);
-
+    // @ts-expect-error req.userID is not defined in the Request type, but it's added by the authenticate middleware
+    console.log("UserID: ", req.userID);
     const newBook = await bookModel.create({
       title,
       genre,
